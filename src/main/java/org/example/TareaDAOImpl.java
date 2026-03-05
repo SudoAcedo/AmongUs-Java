@@ -1,9 +1,6 @@
 package org.example;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class TareaDAOImpl implements TareaDAO {
@@ -76,10 +73,48 @@ public class TareaDAOImpl implements TareaDAO {
 
     public ArrayList<Tarea> obtenerTodos() {
 
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id";
 
-        /**todo return*/
-        return null;
+        ArrayList<Tarea> tablaTarea = new ArrayList<>();
+
+        try (Statement statement = connection.createStatement();
+
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
+
+                Tripulante tripulante = new Tripulante("", "");
+                Sala sala = new Sala("") ;
+                Tarea tarea = new Tarea("", tripulante, sala);
+
+                tarea.setId(resultSet.getInt("id_tarea"));
+                tarea.setDescripcion(resultSet.getString("descripcion"));
+                tarea.setCompletada(resultSet.getBoolean("completada"));
+
+                tripulante.setId(resultSet.getInt("id_tripulante"));
+                tripulante.setNombre(resultSet.getString("nombre_tripulante"));
+                tripulante.setRol(resultSet.getString("rol"));
+                tripulante.setVivo(resultSet.getBoolean("vivo"));
+
+                sala.setId(resultSet.getInt("id_sala"));
+                sala.setNombre(resultSet.getString("nombre_sala"));
+                sala.setSaboteada(resultSet.getBoolean("saboteada"));
+
+
+                tarea.setSala(sala);
+                tarea.setTripulanteAsignado(tripulante);
+
+                tablaTarea.add(tarea);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tablaTarea;
     }
+
     public ArrayList<Tarea> obtenerPorTripulante(int idTrip){
 
 
