@@ -26,8 +26,9 @@ public class Nave {
     }
 
     public void agregarTarea(Tarea tarea) {
+        TareaDAOImpl tareaDAO = new TareaDAOImpl();
 
-        /**todo todo*/
+        tareaDAO.insertar(tarea);
     }
 
     public void limpiarPantalla() {
