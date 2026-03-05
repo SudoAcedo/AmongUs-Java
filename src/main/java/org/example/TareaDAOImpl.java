@@ -32,7 +32,7 @@ public class TareaDAOImpl implements TareaDAO {
         String sql = "SELECT ta.id, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
                 "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
                 "INNER JOIN sala AS s ON ta.id_sala = s.id " +
-                "WHERE ta.id = ?";
+                "WHERE ta.id = ?;";
 
         try(PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
 
@@ -75,13 +75,13 @@ public class TareaDAOImpl implements TareaDAO {
 
         String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
                 "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id";
+                "INNER JOIN sala AS s ON ta.id_sala = s.id;";
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
 
         try (Statement statement = connection.createStatement();
 
-             ResultSet resultSet = statement.executeQuery(sql)) {
+            ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
 
@@ -115,15 +115,57 @@ public class TareaDAOImpl implements TareaDAO {
         return tablaTarea;
     }
 
-    public ArrayList<Tarea> obtenerPorTripulante(int idTrip){
+    public ArrayList<Tarea> obtenerPorTripulante(int idTrip) {
+
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
+                "WHERE tr.id = ?;";
+
+        ArrayList<Tarea> tablaTarea = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, idTrip);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                Tripulante tripulante = new Tripulante("", "");
+                Sala sala = new Sala("");
+                Tarea tarea = new Tarea("", tripulante, sala);
+
+                tarea.setId(resultSet.getInt("id_tarea"));
+                tarea.setDescripcion(resultSet.getString("descripcion"));
+                tarea.setCompletada(resultSet.getBoolean("completada"));
+
+                tripulante.setId(resultSet.getInt("id_tripulante"));
+                tripulante.setNombre(resultSet.getString("nombre_tripulante"));
+                tripulante.setRol(resultSet.getString("rol"));
+                tripulante.setVivo(resultSet.getBoolean("vivo"));
+
+                sala.setId(resultSet.getInt("id_sala"));
+                sala.setNombre(resultSet.getString("nombre_sala"));
+                sala.setSaboteada(resultSet.getBoolean("saboteada"));
 
 
-        /**todo return*/
-        return null;
+                tarea.setSala(sala);
+                tarea.setTripulanteAsignado(tripulante);
+
+                tablaTarea.add(tarea);
+            }
+        }
+    } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tablaTarea;
     }
+
     public void actualizar(Tarea tarea){
 
     }
+
     public void eliminar(int id){
 
     }
