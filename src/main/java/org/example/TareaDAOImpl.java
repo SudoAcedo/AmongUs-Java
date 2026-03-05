@@ -163,7 +163,18 @@ public class TareaDAOImpl implements TareaDAO {
     }
 
     public void actualizar(Tarea tarea){
+        String sql = "UPDATE tarea SET descripcion = ?, completada = ?, id_tripulante = ?, id_sala = ? WHERE id = ?;";
 
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            ps.setString(1, tarea.getDescripcion());
+            ps.setBoolean(2, tarea.isCompletada());
+            ps.setInt(3, tarea.getTripulanteAsignado().getId());
+            ps.setInt(4, tarea.getSala().getId());
+            ps.setInt(5, tarea.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void eliminar(int id){
