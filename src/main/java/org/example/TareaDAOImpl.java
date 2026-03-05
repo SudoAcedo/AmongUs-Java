@@ -179,5 +179,13 @@ public class TareaDAOImpl implements TareaDAO {
 
     public void eliminar(int id){
 
+        String sql = " DELETE FROM tarea WHERE id = ?;";
+
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
