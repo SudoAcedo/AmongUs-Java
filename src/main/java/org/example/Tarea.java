@@ -51,6 +51,10 @@ public class Tarea {
         return sala;
     }
 
+    public void setSala(Sala sala) {
+        this.sala = sala;
+    }
+
     @Override
     public String toString() {
         /**todo falta definirlo*/
