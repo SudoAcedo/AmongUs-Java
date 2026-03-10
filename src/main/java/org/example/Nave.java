@@ -43,6 +43,67 @@ public class Nave {
 
     public void mostrarEstadoNave() {
 
+        ArrayList<Tripulante> tripulantesVivos = new ArrayList<>();
+        ArrayList<Tripulante> tripulantesMueltos = new ArrayList<>();
+
+        ArrayList<Tarea> TareasCompletadas = new ArrayList<>();
+
+        ArrayList<Salas> salasSaboteadas = new ArrayList<>();
+
+        for (Tripulante tripulante : this.tripulantes) {
+            if (tripulante.isVivo()) {
+                tripulantesVivos.add(tripulante);
+            } else {
+                tripulantesMueltos.add(tripulante);
+            }
+        }
+
+        System.out.print("Tripulantes vivos: ");
+        for (Tripulante tripulante : tripulantesVivos) {
+            int i = 1;
+            i++;
+            if (i < tripulantesVivos.size()) {
+            System.out.print(tripulante + ", ");
+            } else {
+                System.out.println(tripulante + ".");
+            }
+        }
+
+        System.out.print("Tripulantes eliminados: ");
+        if (tripulantesMueltos.isEmpty()) {
+            System.out.println("ninguno.");
+        } else {
+            for (Tripulante tripulante : tripulantesMueltos) {
+                int i = 1;
+                i++;
+                if (i < tripulantesMueltos.size()) {
+                    System.out.print(tripulante + ", ");
+                } else {
+                    System.out.println(tripulante + ".");
+                }
+            }
+        }
+
+        System.out.print("Salas saboteadas: ");
+        for (Sala sala : this.salas) {
+            if (sala.isSaboteada()) {
+                System.out.print(sala.getNombre() + " ");
+            }
+        }
+
+        for (Tarea tarea : this.tareas) {
+            if (tarea.isCompletada()) {
+                TareasCompletadas.add(tarea);
+            }
+        }
+        System.out.print("Tareas completas: ");
+        int contador = 0;
+        for (Tarea tarea : this.tareas) {
+            if (tarea.isCompletada()) {
+                contador++;
+            }
+        }
+        System.out.println(contador + "/" + this.tareas.size());
     }
 
     public void iniciarVotacion() {
