@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Nave {
     private ArrayList<Tripulante> tripulantes;
@@ -24,10 +25,10 @@ public class Nave {
         return tareas;
     }
 
-    public Tarea agregarTarea() {
+    public void agregarTarea(Tarea tarea) {
+        TareaDAOImpl tareaDAO = new TareaDAOImpl();
 
-        /**todo todo*/
-        return null;
+        tareaDAO.insertar(tarea);
     }
 
     public void limpiarPantalla() {
@@ -35,7 +36,7 @@ public class Nave {
         System.out.print("\033[H\033[2J");
         System.out.flush(); */
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 150; i++) {
             System.out.println();
         }
     }
