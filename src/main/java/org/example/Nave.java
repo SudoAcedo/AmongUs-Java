@@ -1,6 +1,9 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class Nave {
     private ArrayList<Tripulante> tripulantes;
@@ -107,7 +110,88 @@ public class Nave {
 
     public void iniciarVotacion() {
 
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Tripulantes vivos que votan:");
+        ArrayList<Tripulante> tripulantesVotan = new ArrayList<>();
+
+        HashMap<Tripulante, Integer> votos = new HashMap<>();
+        int zzz = 0;
+
+        for (Tripulante tripulante : this.tripulantes) {
+            if (tripulante.isVivo()) {
+                zzz++;
+                System.out.print(zzz + ") " + tripulante.getNombre() + " ".repeat(5));
+                tripulantesVotan.add(tripulante);
+                votos.put(tripulante, 0);
+            }
+        }
+
+
+        for (Tripulante tripulante : tripulantesVotan) {
+
+            limpiarPantalla();
+            System.out.println("Turno de " + tripulante.getNombre());
+
+
+            System.out.println("?A quien votas¿ (1-" + tripulantesVotan.size() + ", 0 para skip)");
+            boolean c = true;
+            while (c) {
+
+                String resp = scanner.nextLine().trim();
+                int indiceTripulante = 0;
+                if (resp.isEmpty()) {
+                    continue;
+                } else {
+                    try {
+                        indiceTripulante = indiceTripulante + Integer.parseInt(resp);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Introduce un número.");
+                        continue;
+                    }
+                }
+
+                if (indiceTripulante < 0 || indiceTripulante > tripulantesVotan.size()) {
+                    System.out.println("Introduce una respuesta válida.");
+                } else {
+                    if (indiceTripulante == 0) {
+                        System.out.println("Saltando votación...");
+                    } else {
+
+                        Tripulante tripulanteVotado = tripulantesVotan.get(indiceTripulante - 1);
+
+                        System.out.println(tripulante.getNombre() + " vota a " + tripulanteVotado.getNombre());
+
+                        /** */
+                        tripulante.votar(tripulanteVotado);
+                        /** */
+                        /* TODO(Pablo): (id_TODO_1) no se si va en votar()
+                        votos.put(tripulanteVotado, votos.get(tripulanteVotado) + 1);
+                        */
+                    }
+                    c = false;
+                }
+            }
+
+        }
+
+        /* TODO(Pablo): (id_TODO_2) no se si va en votar() con lo anterior todo(id_TODO_1)
+        int maxVotos = Collections.max(votos.values());
+         String nombreTripulante = "nadie";
+        int idTripulante = 0;
+
+        if (!(Collections.frequency(votos.values(), maxVotos) > 1) && maxVotos != 0) {
+            for (Tripulante tripulante : votos.keySet()) {
+                if (votos.get(tripulante) == maxVotos) {
+                    idTripulante = tripulante.getId();
+                    nombreTripulante = tripulante.getNombre();
+                }
+            }
+        }
+        */
+
     }
+
 
     public boolean verificarVictoriaTripulantes() {
 
@@ -165,6 +249,6 @@ public class Nave {
     }
 
     public void turno() {
-
+        /* TODO(Javi): (id_TODO_3) hacer esto al final */
     }
 }
