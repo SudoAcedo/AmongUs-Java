@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Nave {
     private ArrayList<Tripulante> tripulantes;
@@ -112,8 +111,37 @@ public class Nave {
 
     public boolean verificarVictoriaTripulantes() {
 
-        /**todo todo*/
-        return Boolean.parseBoolean(null);
+        boolean todosImpostoresEliminados = false;
+        boolean todasTareasCompletas = false;
+
+        int contadorDeImpostores = 0;
+        int impostoresEliminados = 0;
+
+        for (Tripulante tripulante : this.tripulantes) {
+            if (tripulante.getRol().equals("Impostor")) {
+                contadorDeImpostores++;
+                if (!tripulante.isVivo()) {
+                    impostoresEliminados++;
+                }
+            }
+        }
+        if (contadorDeImpostores == impostoresEliminados) {
+            todosImpostoresEliminados = true;
+        }
+
+        int contadorTareas = 0;
+
+        for (Tarea tarea : this.tareas) {
+            if (tarea.isCompletada()) {
+                contadorTareas++;
+            }
+        }
+
+        if (contadorTareas == this.tareas.size()) {
+            todasTareasCompletas = true;
+        }
+
+        return (todosImpostoresEliminados || todasTareasCompletas);
     }
 
     public boolean verificarVictoriaImpostor() {
