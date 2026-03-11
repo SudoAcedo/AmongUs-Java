@@ -146,8 +146,22 @@ public class Nave {
 
     public boolean verificarVictoriaImpostor() {
 
-        /**todo todo*/
-        return Boolean.parseBoolean(null);
+        int contadorTripulantes = 0;
+        int contadorImpostores = 0;
+
+        for (Tripulante tripulante : this.tripulantes) {
+            if (tripulante.getRol().equals("Impostor")) {
+                if (tripulante.isVivo()) {
+                    contadorImpostores++;
+                }
+            } else {
+                if (tripulante.isVivo()) {
+                    contadorTripulantes++;
+                }
+            }
+        }
+
+        return (contadorImpostores >= contadorTripulantes);
     }
 
     public void turno() {
