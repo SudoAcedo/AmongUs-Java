@@ -14,7 +14,7 @@ public class TareaDAOImpl implements TareaDAO {
         String sql = "INSERT INTO tarea (descripcion, completada, id_tripulante, id_sala) VALUES (?, ?, ?, ?)";
 
 
-        try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tarea.getDescripcion());
             ps.setBoolean(2, tarea.isCompletada());
             ps.setInt(3, tarea.getTripulanteAsignado().getId());
@@ -28,13 +28,13 @@ public class TareaDAOImpl implements TareaDAO {
 
     //Esto crea una tarea nueva
     public Tarea obtener(int id) {
-        String sql = "SELECT ta.id, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
-                "WHERE ta.id = ?;";
+        String sql = "SELECT ta.id_tarea, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
+                "WHERE ta.id_tarea = ?;";
 
 
-        try(Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
 
 
             ps.setInt(1, id);
@@ -45,13 +45,29 @@ public class TareaDAOImpl implements TareaDAO {
 
                 if (resultSet.next()) {
 
+                    String rol = resultSet.getString("rol");
+                    Tripulante tripulante = null;
 
-                    Tripulante tripulante = new Tripulante("", "");
+                    switch (rol) {
+                        case "Impostor":
+                            tripulante = new Impostor("");
+                            break;
+                        case "Capitan":
+                            tripulante = new Capitan("");
+                            break;
+                        case "Ingeniero":
+                            tripulante = new Ingeniero("");
+                            break;
+                        case "Medico":
+                            tripulante = new Medico("");
+                            break;
+                    }
+
                     Sala sala = new Sala("") ;
                     Tarea tarea = new Tarea("", tripulante, sala);
 
 
-                    tarea.setId(resultSet.getInt("id"));
+                    tarea.setId(resultSet.getInt("id_tarea"));
                     tarea.setDescripcion(resultSet.getString("descripcion"));
                     tarea.setCompletada(resultSet.getBoolean("completada"));
 
@@ -84,15 +100,15 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerTodos() {
 
 
-        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id;";
+        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
 
 
-        try (Connection connection = DBUtil.getConnection(); Statement statement = connection.createStatement();
+        try (Connection connection = DBUtil.getInstance().getConexion(); Statement statement = connection.createStatement();
 
 
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -100,8 +116,26 @@ public class TareaDAOImpl implements TareaDAO {
 
             while (resultSet.next()) {
 
+                String rol = resultSet.getString("rol");
+                Tripulante tripulante = null;
 
-                Tripulante tripulante = new Tripulante("", "");
+                switch (rol) {
+                    case "Impostor":
+                        tripulante = new Impostor("");
+                        break;
+                    case "Capitan":
+                        tripulante = new Capitan("");
+                        break;
+                    case "Ingeniero":
+                        tripulante = new Ingeniero("");
+                        break;
+                    case "Medico":
+                        tripulante = new Medico("");
+                        break;
+                }
+
+
+
                 Sala sala = new Sala("") ;
                 Tarea tarea = new Tarea("", tripulante, sala);
 
@@ -142,16 +176,16 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerPorTripulante(int idTrip) {
 
 
-        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
-                "WHERE tr.id = ?;";
+        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
+                "WHERE tr.id_tripulante = ?;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
 
 
-        try (Connection connection = DBUtil.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
 
             preparedStatement.setInt(1, idTrip);
@@ -163,7 +197,27 @@ public class TareaDAOImpl implements TareaDAO {
                 while (resultSet.next()) {
 
 
-                    Tripulante tripulante = new Tripulante("", "");
+
+                    String rol = resultSet.getString("rol");
+                    Tripulante tripulante = null;
+
+                    switch (rol) {
+                        case "Impostor":
+                            tripulante = new Impostor("");
+                            break;
+                        case "Capitan":
+                            tripulante = new Capitan("");
+                            break;
+                        case "Ingeniero":
+                            tripulante = new Ingeniero("");
+                            break;
+                        case "Medico":
+                            tripulante = new Medico("");
+                            break;
+                    }
+
+
+
                     Sala sala = new Sala("");
                     Tarea tarea = new Tarea("", tripulante, sala);
 
@@ -204,7 +258,7 @@ public class TareaDAOImpl implements TareaDAO {
         String sql = "UPDATE tarea SET descripcion = ?, completada = ?, id_tripulante = ?, id_sala = ? WHERE id = ?;";
 
 
-        try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tarea.getDescripcion());
             ps.setBoolean(2, tarea.isCompletada());
             ps.setInt(3, tarea.getTripulanteAsignado().getId());
@@ -220,10 +274,10 @@ public class TareaDAOImpl implements TareaDAO {
     public void eliminar(int id){
 
 
-        String sql = " DELETE FROM tarea WHERE id = ?;";
+        String sql = " DELETE FROM tarea WHERE id_tarea = ?;";
 
 
-        try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {

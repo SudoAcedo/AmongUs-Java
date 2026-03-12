@@ -37,7 +37,9 @@ public abstract class Tripulante {
     }
 
     public void votar(Tripulante tripulante) {
-
+        /*
+        haz "shift" + "shift" y "ctrl + c + v" de "TODO(Pablo):"
+         */
     }
 
     public abstract void habilidadEspecial();
