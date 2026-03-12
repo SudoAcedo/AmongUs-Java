@@ -2,7 +2,7 @@ package org.example;
 
 import java.sql.PreparedStatement;
 
-public abstract class Tripulante {
+public abstract class Tripulante implements Votable, Trabajable{
 
     private int id;
     private String nombre;
@@ -27,11 +27,34 @@ public abstract class Tripulante {
         return rol;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
+    }
+
     public boolean isVivo() {
         return vivo;
     }
 
     public void realizarTarea(Tarea tarea) {
+
+        if (vivo == true && tarea.getTripulanteAsignado().getId() == this.id) {
+
+            tarea.setCompletada(true);
+        } else {
+            System.out.println("Esta tarea ha sido asignada a otro tripulante");
+        }
 
 
     }

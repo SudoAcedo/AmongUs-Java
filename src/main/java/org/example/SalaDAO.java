@@ -9,6 +9,5 @@ public interface SalaDAO {
     public ArrayList<Sala> obtenerTodos();
     public void actualizar(Sala sala);
     public void eliminar(int id);
-
 }
 
