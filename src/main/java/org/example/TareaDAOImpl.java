@@ -116,8 +116,26 @@ public class TareaDAOImpl implements TareaDAO {
 
             while (resultSet.next()) {
 
+                String rol = resultSet.getString("rol");
+                Tripulante tripulante = null;
 
-                Tripulante tripulante = new Tripulante("", "");
+                switch (rol) {
+                    case "Impostor":
+                        tripulante = new Impostor("");
+                        break;
+                    case "Capitan":
+                        tripulante = new Capitan("");
+                        break;
+                    case "Ingeniero":
+                        tripulante = new Ingeniero("");
+                        break;
+                    case "Medico":
+                        tripulante = new Medico("");
+                        break;
+                }
+
+
+
                 Sala sala = new Sala("") ;
                 Tarea tarea = new Tarea("", tripulante, sala);
 
@@ -179,7 +197,27 @@ public class TareaDAOImpl implements TareaDAO {
                 while (resultSet.next()) {
 
 
-                    Tripulante tripulante = new Tripulante("", "");
+
+                    String rol = resultSet.getString("rol");
+                    Tripulante tripulante = null;
+
+                    switch (rol) {
+                        case "Impostor":
+                            tripulante = new Impostor("");
+                            break;
+                        case "Capitan":
+                            tripulante = new Capitan("");
+                            break;
+                        case "Ingeniero":
+                            tripulante = new Ingeniero("");
+                            break;
+                        case "Medico":
+                            tripulante = new Medico("");
+                            break;
+                    }
+
+
+
                     Sala sala = new Sala("");
                     Tarea tarea = new Tarea("", tripulante, sala);
 
