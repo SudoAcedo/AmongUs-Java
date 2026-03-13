@@ -66,7 +66,6 @@ public abstract class Tripulante implements Votable, Trabajable{
         } else {
             System.out.println("El voto no es valido");
         }
-
     }
 
     public abstract void habilidadEspecial();
