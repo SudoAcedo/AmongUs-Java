@@ -59,9 +59,13 @@ public abstract class Tripulante implements Votable, Trabajable{
 
     }
 
-    public void votar(Tripulante tripulante) {
+    public void votar(Tripulante sospechoso) {
 
-
+        if (this.isVivo() && sospechoso.isVivo()) {
+            System.out.println(this.nombre + " vota a " + sospechoso.getNombre() + ".");
+        } else {
+            System.out.println("El voto no es valido");
+        }
 
     }
 

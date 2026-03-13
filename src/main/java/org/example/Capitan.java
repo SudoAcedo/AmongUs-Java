@@ -7,10 +7,10 @@ public Capitan(String nombre){
 }
 
 public void habilidadEspecial(){
-
+    System.out.println("Tu habilidad especial es el poder de convocar las votaciones");
 }
 
 public void convocarVotacion(Nave nave) {
-
+    nave.iniciarVotacion();
 }
 }
