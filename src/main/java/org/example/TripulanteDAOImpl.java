@@ -5,22 +5,16 @@ import java.util.ArrayList;
 
 public class TripulanteDAOImpl implements TripulanteDAO {
 
-    private Connection conexion;
-
-    public TripulanteDAOImpl(Connection conexion) {
-        this.conexion = conexion;
-    }
-
 
     @Override
     public void insertar(Tripulante tripulante) {
 
         String sqlInsert = "INSERT INTO tripulante(nombre, rol, vivo) VALUES(?,?,?)";
 
-        try(PreparedStatement pst = this.conexion.prepareStatement(sqlInsert)){
+        try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement pst = connection.prepareStatement(sqlInsert)){
             pst.setString(1, tripulante.getNombre());
-            pst.setString(2, tripulante.getRol() );
-            pst.setBoolean(3, tripulante.isVivo() );
+            pst.setString(2, tripulante.getRol());
+            pst.setBoolean(3, tripulante.isVivo());
             pst.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

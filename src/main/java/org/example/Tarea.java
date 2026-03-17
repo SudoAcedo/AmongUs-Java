@@ -8,10 +8,14 @@ public class Tarea {
     private Tripulante tripulanteAsignado;
     private Sala sala;
 
+    private static int contadorIdsTarea = 1;
+
     public Tarea(String descripcion, Tripulante tripulante, Sala sala) {
+        this.id = contadorIdsTarea;
         this.descripcion = descripcion;
         this.tripulanteAsignado = tripulante;
         this.sala = sala;
+        contadorIdsTarea++;
     }
 
     public int getId() {

@@ -264,11 +264,28 @@ public class Main {
             }
         }
 
+        SalaDaoImpl salaDao = new SalaDaoImpl();
+
+        for (Sala sala : salas) {
+            salaDao.insertar(sala);
+        }
+
+        TripulanteDAOImpl tripulanteDAO = new TripulanteDAOImpl();
+
+        for (Tripulante tripulante : tripulacion) {
+            tripulanteDAO.insertar(tripulante);
+        }
+
+        TareaDAOImpl tareaDAO = new TareaDAOImpl();
+
+        for (Tarea tarea : tareas) {
+            tareaDAO.insertar(tarea);
+        }
 
         Nave nave = new Nave(tripulacion, salas, tareas);
 
         while (!nave.verificarVictoriaImpostor() && !nave.verificarVictoriaTripulantes()) {
-            int tripulanteTurno = turno%tripulacion.size();
+            int tripulanteTurno = turno % tripulacion.size();
             nave.turno(tripulacion.get(tripulanteTurno));
             turno++;
         }
