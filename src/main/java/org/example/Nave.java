@@ -10,9 +10,10 @@ public class Nave {
     private ArrayList<Sala> salas;
     private ArrayList<Tarea> tareas;
 
-    public Nave(ArrayList<Tripulante> tripulantes, ArrayList<Sala> salas) {
+    public Nave(ArrayList<Tripulante> tripulantes, ArrayList<Sala> salas, ArrayList<Tarea> tareas) {
         this.tripulantes = tripulantes;
         this.salas = salas;
+        this.tareas = tareas;
     }
 
     public ArrayList<Tripulante> getTripulantes() {
@@ -121,6 +122,7 @@ public class Nave {
                 String resp = scanner.nextLine().trim();
                 int indiceTripulante = 0;
                 if (resp.isEmpty()) {
+                    System.out.println("Introduce una respuesta válida.");
                     continue;
                 } else {
                     try {
@@ -231,6 +233,8 @@ public class Nave {
     // Se requiere Tripulante tripulanteTurno para saber de quien es el turno.
     public void turno(Tripulante tripulanteTurno) {
 
+        limpiarPantalla();
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Turno de " + tripulanteTurno.getNombre());
@@ -259,102 +263,110 @@ public class Nave {
 
 
         if (tripulanteTurno.getRol().equals("Impostor")) {
+            if (tripulanteTurno.isVivo()) {
+                System.out.println("¿Que quieres hacer?: ");
+                System.out.println("   1) Simular tarea.");
+                System.out.print("   2) Sabotear una sala: ");
+                System.out.println("   3) Eliminar a un tripulante");
+                System.out.println("   4) Convocar votacion");
+                System.out.println("   5) Pasar turno");
+                System.out.println("Elige una opción: ");
 
-            System.out.println("¿Que quieres hacer?: ");
-            System.out.println("   1) Simular tarea.");
-            System.out.print("   2) Sabotear una sala: ");
-            System.out.println("   3) Eliminar a un tripulante");
-            System.out.println("   4) Convocar votacion");
-            System.out.println("   5) Pasar turno");
-            System.out.println("Elige una opción: ");
+                boolean b = true;
 
-            boolean b = true;
+                while (b) {
+                    String respuesta = scanner.nextLine().trim();
+                    respuesta = respuesta + " ";
 
-            while (b) {
-                String respuesta = scanner.nextLine().trim();
+                    Impostor impostor = new Impostor(tripulanteTurno.getNombre());
 
-                Impostor impostor = new Impostor(tripulanteTurno.getNombre());
+                    switch (respuesta.charAt(0)) {
 
-                switch (respuesta.charAt(0)) {
+                        case '1':
+                            System.out.println("Simulaste una tarea.");
+                            break;
 
-                    case '1':
-                        System.out.println("Simulaste una tarea.");
-                        break;
+                        case '2':
 
-                    case '2':
-
-                        ArrayList<Sala> salasNoSaboteadas = new ArrayList<>();
-                        for (Sala sala : this.salas) {
-                            if (sala.isSaboteada()) {
-                                salasNoSaboteadas.add(sala);
+                            ArrayList<Sala> salasNoSaboteadas = new ArrayList<>();
+                            for (Sala sala : this.salas) {
+                                if (sala.isSaboteada()) {
+                                    salasNoSaboteadas.add(sala);
+                                }
                             }
-                        }
 
-                        System.out.println("¿Que sala quieres sabotear?");
-                        for (int i = 1; i <= salasNoSaboteadas.size(); i++) {
-                            System.out.println("    [" + i + "] " + salasNoSaboteadas.get(i - 1).getNombre());
-                        }
-
-                        boolean f = true;
-
-                        while (f) {
-                            String r4 = scanner.nextLine().trim();
-                            int rI4 = 0;
-                            try {
-                                rI4 = Integer.parseInt(r4);
-                            } catch (NumberFormatException e) {
-                                System.out.println("Introduce una respuesta válida.");
+                            System.out.println("¿Que sala quieres sabotear?");
+                            for (int i = 1; i <= salasNoSaboteadas.size(); i++) {
+                                System.out.println("    [" + i + "] " + salasNoSaboteadas.get(i - 1).getNombre());
                             }
-                            if (rI4> vivos.size()) {
-                                System.out.println("Introduce una respuesta válida.");
-                            } else {
-                                impostor.sabotear(salasNoSaboteadas.get(rI4-1));
-                                f = false;
+
+                            boolean f = true;
+
+                            while (f) {
+                                String resp4 = scanner.nextLine().trim();
+                                int respInt4 = 0;
+                                try {
+                                    respInt4 = Integer.parseInt(resp4);
+                                    respInt4 = respInt4 - 1;
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Introduce una respuesta válida.");
+                                    continue;
+                                }
+                                if (respInt4 >= salasNoSaboteadas.size() || respInt4 < 0) {
+                                    System.out.println("Introduce una respuesta válida.");
+                                } else {
+                                    impostor.sabotear(salasNoSaboteadas.get(respInt4));
+                                    f = false;
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                    case '3':
-                        System.out.println("¿A quien quieres eliminar?");
+                        case '3':
+                            System.out.println("¿A quien quieres eliminar?");
 
-                        tripulantesVivos.remove(tripulanteTurno);
+                            tripulantesVivos.remove(tripulanteTurno);
 
-                        for (int i = 1; i <= vivos.size(); i++) {
-                            System.out.println("    [" + i + "] " + vivos.get(i - 1) + ".");
-                        }
-
-                        boolean c = true;
-
-                        while (c) {
-                            String r5 = scanner.nextLine().trim();
-                            int rI5 = 0;
-                            try {
-                                rI5 = Integer.parseInt(r5);
-                            } catch (NumberFormatException e) {
-                                System.out.println("Introduce una respuesta válida.");
+                            for (int i = 1; i <= vivos.size(); i++) {
+                                System.out.println("    [" + i + "] " + vivos.get(i - 1) + ".");
                             }
-                            if (rI5 > vivos.size()) {
-                                System.out.println("Introduce una respuesta válida.");
-                            } else {
-                                impostor.eliminar(tripulantesVivos.get(rI5 - 1));
-                                c = false;
-                            }
-                        }
-                        b = false;
-                        break;
-                    case '4':
-                        iniciarVotacion();
-                        b = false;
-                        break;
-                    case '5':
-                        b = false;
-                        break;
-                    default:
-                        System.out.println("Introduce una respuesta válida.");
 
+                            boolean c = true;
+
+                            while (c) {
+                                String resp5 = scanner.nextLine().trim();
+                                int respInt5 = 0;
+                                try {
+                                    respInt5 = Integer.parseInt(resp5);
+                                    respInt5 = respInt5 - 1;
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Introduce una respuesta válida.");
+                                    continue;
+                                }
+                                if (respInt5 >= tripulantesVivos.size() || respInt5 < 0) {
+                                    System.out.println("Introduce una respuesta válida.");
+                                } else {
+                                    impostor.eliminar(tripulantesVivos.get(respInt5));
+                                    c = false;
+                                }
+                            }
+                            b = false;
+                            break;
+                        case '4':
+                            iniciarVotacion();
+                            b = false;
+                            break;
+                        case '5':
+                            b = false;
+                            break;
+                        default:
+                            System.out.println("Introduce una respuesta válida.");
+
+                    }
                 }
+            } else {
+                System.out.println("Te han eliminado. Espera a que termine la partida. (Enter)");
+                scanner.nextLine();
             }
-
         } else {
 
             ArrayList<Tarea> tripulanteTareas = new ArrayList<>();
@@ -370,133 +382,197 @@ public class Nave {
                 System.out.println("    [" + i + "] " + tripulanteTareas.get(i - 1).getDescripcion() + " - " + tripulanteTareas.get(i - 1).getSala().getNombre());
             }
 
-            System.out.println("¿Que quieres hacer?: ");
-            System.out.println("   1) Realizar tarea.");
-            System.out.print("   2) Usar habilidad especial: ");
-            tripulanteTurno.habilidadEspecial();
-            System.out.println("   3) Convocar votación de emergencia");
-            System.out.println("   4) Pasar turno");
-            System.out.println("Elige una opción: ");
+            if (tripulanteTurno.isVivo()) {
+                System.out.println("¿Que quieres hacer?: ");
+                System.out.println("   1) Realizar tarea.");
+                System.out.print("   2) Usar habilidad especial: ");
+                tripulanteTurno.habilidadEspecial();
+                System.out.println("   3) Convocar votación de emergencia");
+                System.out.println("   4) Pasar turno");
+                System.out.println("Elige una opción: ");
 
-            boolean b = true;
+                boolean b = true;
 
-            while (b) {
-                String respuesta = scanner.nextLine().trim();
+                while (b) {
+                    String respuesta = scanner.nextLine().trim();
+                    respuesta = respuesta + " ";
 
-                switch (respuesta.charAt(0)) {
+                    switch (respuesta.charAt(0)) {
 
-                    case '1':
-                        if (!tripulanteTareas.isEmpty()) {
-                            System.out.println("¿Que tarea quieres realizar? ");
-                            for (int i = 1; i <= tripulanteTareas.size(); i++) {
-                                System.out.println("    [" + i + "] " + tripulanteTareas.get(i - 1).getDescripcion() + " - " + tripulanteTareas.get(i - 1).getSala().getNombre());
-                            }
-                            boolean a = true;
-                            while (a) {
-                                String r1 = scanner.nextLine().trim();
-                                int rI1 = 0;
-                                try {
-                                    rI1 = Integer.parseInt(r1);
-                                } catch (NumberFormatException e) {
-                                    System.out.println("Introduce una respuesta válida.");
+                        case '1':
+                            if (!tripulanteTareas.isEmpty()) {
+                                System.out.println("¿Que tarea quieres realizar? ");
+                                for (int i = 1; i <= tripulanteTareas.size(); i++) {
+                                    System.out.println("    [" + i + "] " + tripulanteTareas.get(i - 1).getDescripcion() + " - " + tripulanteTareas.get(i - 1).getSala().getNombre());
                                 }
+                                boolean a = true;
+                                while (a) {
+                                    String resp1 = scanner.nextLine().trim();
+                                    int respInt1 = 0;
+                                    try {
+                                        respInt1 = Integer.parseInt(resp1);
+                                        respInt1 = respInt1 - 1;
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Introduce una respuesta válida.");
+                                        continue;
+                                    }
 
-                                if (rI1 > tareas.size()) {
-                                    System.out.println("Introduce una respuesta válida.");
-                                } else {
-                                    System.out.println("Tarea completada.");
-                                    tripulanteTareas.get(rI1 - 1).setCompletada(true);
-                                    a = false;
+                                    if (respInt1 >= tripulanteTareas.size() || respInt1 < 0) {
+                                        System.out.println("Introduce una respuesta válida.");
+                                    } else {
+                                        System.out.println("Tarea completada.");
+                                        tripulanteTareas.get(respInt1).setCompletada(true);
+                                        a = false;
+                                    }
                                 }
+                                b = false;
+                                break;
+                            } else {
+                                System.out.println("Todas tus tereas están completas");
+                                break;
                             }
+                        case '2':
+
+                            String rol = tripulanteTurno.getRol();
+
+                            switch (rol) {
+                                case "Medico":
+                                    System.out.println("¿A quien quieres examinar?");
+
+                                    for (int i = 1; i <= vivos.size(); i++) {
+                                        System.out.println("    [" + i + "] " + vivos.get(i - 1) + ".");
+                                    }
+
+                                    boolean c = true;
+
+                                    while (c) {
+                                        String resp2 = scanner.nextLine().trim();
+                                        int respInt2 = 0;
+                                        try {
+                                            respInt2 = Integer.parseInt(resp2);
+                                            respInt2 = respInt2 - 1;
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Introduce una respuesta válida.");
+                                            continue;
+                                        }
+                                        if (respInt2 >= vivos.size() || respInt2 < 0) {
+                                            System.out.println("Introduce una respuesta válida.");
+                                        } else {
+                                            Medico medico = new Medico(tripulanteTurno.getNombre());
+                                            medico.examinar(tripulantesVivos.get(respInt2));
+                                            c = false;
+                                        }
+                                    }
+                                    break;
+                                case "Capitan":
+                                    Capitan capitan = new Capitan(tripulanteTurno.getNombre());
+                                    capitan.convocarVotacion(this);
+                                    break;
+                                case "Ingeniero":
+
+                                    ArrayList<Sala> salasSaboteadas = new ArrayList<>();
+                                    for (Sala sala : this.salas) {
+                                        if (sala.isSaboteada()) {
+                                            salasSaboteadas.add(sala);
+                                        }
+                                    }
+
+                                    System.out.println("¿Que sala quieres reparar?");
+                                    for (int i = 1; i <= salasSaboteadas.size(); i++) {
+                                        System.out.println("    [" + i + "] " + salasSaboteadas.get(i - 1).getNombre());
+                                    }
+
+                                    boolean d = true;
+
+                                    while (d) {
+                                        String resp3 = scanner.nextLine().trim();
+                                        int respInt3 = 0;
+                                        try {
+                                            respInt3 = Integer.parseInt(resp3);
+                                            respInt3 = respInt3 - 1;
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Introduce una respuesta válida.");
+                                            continue;
+                                        }
+                                        if (respInt3 >= salasSaboteadas.size() || respInt3 < 0) {
+                                            System.out.println("Introduce una respuesta válida.");
+                                        } else {
+                                            Ingeniero ingeniero = new Ingeniero(tripulanteTurno.getNombre());
+                                            ingeniero.repararSala(salasSaboteadas.get(respInt3));
+                                            d = false;
+                                        }
+                                    }
+                                    break;
+                            }
+
                             b = false;
                             break;
-                        } else {
-                            System.out.println("Todas tus tereas están completas");
+                        case '3':
+                            iniciarVotacion();
+                            b = false;
                             break;
-                        }
-                    case '2':
+                        case '4':
+                            b = false;
+                            break;
+                        default:
+                            System.out.println("Introduce una respuesta válida.");
 
-                        String rol = tripulanteTurno.getRol();
+                    }
+                }
+            } else {
+                System.out.println("Te han eliminado pero puedes hacer tareas.");
+                System.out.println("¿Que quieres hacer?: ");
+                System.out.println("   1) Realizar tarea.");
+                System.out.println("   2) Pasar turno");
+                System.out.println("Elige una opción: ");
 
-                        switch (rol) {
-                            case "Medico":
-                                System.out.println("¿A quien quieres examinar?");
+                boolean b = true;
 
-                                for (int i = 1; i <= vivos.size(); i++) {
-                                    System.out.println("    [" + i + "] " + vivos.get(i- 1) + ".");
+                while (b) {
+                    String respuesta = scanner.nextLine().trim();
+                    respuesta = respuesta + " ";
+
+                    switch (respuesta.charAt(0)) {
+
+                        case '1':
+                            if (!tripulanteTareas.isEmpty()) {
+                                System.out.println("¿Que tarea quieres realizar? ");
+                                for (int i = 1; i <= tripulanteTareas.size(); i++) {
+                                    System.out.println("    [" + i + "] " + tripulanteTareas.get(i - 1).getDescripcion() + " - " + tripulanteTareas.get(i - 1).getSala().getNombre());
                                 }
-
-                                boolean c = true;
-
-                                while (c) {
-                                    String r2 = scanner.nextLine().trim();
-                                    int rI2 = 0;
+                                boolean a = true;
+                                while (a) {
+                                    String resp1 = scanner.nextLine().trim();
+                                    int respInt1 = 0;
                                     try {
-                                        rI2 = Integer.parseInt(r2);
+                                        respInt1 = Integer.parseInt(resp1);
+                                        respInt1 = respInt1 - 1;
                                     } catch (NumberFormatException e) {
                                         System.out.println("Introduce una respuesta válida.");
+                                        continue;
                                     }
-                                    if (rI2 > vivos.size()) {
+
+                                    if (respInt1 >= tripulanteTareas.size() || respInt1 < 0) {
                                         System.out.println("Introduce una respuesta válida.");
                                     } else {
-                                        Medico medico = new Medico(tripulanteTurno.getNombre());
-                                        medico.examinar(tripulantesVivos.get(rI2 - 1));
-                                        c = false;
+                                        System.out.println("Tarea completada.");
+                                        tripulanteTareas.get(respInt1).setCompletada(true);
+                                        a = false;
                                     }
                                 }
+                                b = false;
                                 break;
-                            case "Capitan":
-                                Capitan capitan = new Capitan(tripulanteTurno.getNombre());
-                                capitan.convocarVotacion(this);
+                            } else {
+                                System.out.println("Todas tus tereas están completas");
                                 break;
-                            case "Ingeniero":
+                            }
+                        case '2':
+                            b = false;
+                            break;
+                        default:
+                            System.out.println("Introduce una respuesta válida.");
 
-                                ArrayList<Sala> salasSaboteadas = new ArrayList<>();
-                                for (Sala sala : this.salas) {
-                                    if (sala.isSaboteada()) {
-                                        salasSaboteadas.add(sala);
-                                    }
-                                }
-
-                                System.out.println("¿Que sala quieres reparar?");
-                                for (int i = 1; i <= salasSaboteadas.size(); i++) {
-                                    System.out.println("    [" + i + "] " + salasSaboteadas.get(i - 1).getNombre());
-                                }
-
-                                boolean d = true;
-
-                                while (d) {
-                                    String r3 = scanner.nextLine().trim();
-                                    int rI3 = 0;
-                                    try {
-                                        rI3 = Integer.parseInt(r3);
-                                    } catch (NumberFormatException e) {
-                                        System.out.println("Introduce una respuesta válida.");
-                                    }
-                                    if (rI3 > vivos.size()) {
-                                        System.out.println("Introduce una respuesta válida.");
-                                    } else {
-                                        Ingeniero ingeniero = new Ingeniero(tripulanteTurno.getNombre());
-                                        ingeniero.repararSala(salasSaboteadas.get(rI3 - 1));
-                                        d = false;
-                                    }
-                                }
-                                break;
-                        }
-
-                        b = false;
-                        break;
-                    case '3':
-                        iniciarVotacion();
-                        b = false;
-                        break;
-                    case '4':
-                        b = false;
-                        break;
-                    default:
-                        System.out.println("Introduce una respuesta válida.");
-
+                    }
                 }
             }
         }

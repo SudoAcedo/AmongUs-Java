@@ -5,8 +5,8 @@ public class Tarea {
     private int id;
     private String descripcion;
     private boolean completada;
-     private Tripulante tripulanteAsignado;
-     private Sala sala;
+    private Tripulante tripulanteAsignado;
+    private Sala sala;
 
     public Tarea(String descripcion, Tripulante tripulante, Sala sala) {
         this.descripcion = descripcion;

@@ -28,10 +28,10 @@ public class TareaDAOImpl implements TareaDAO {
 
     //Esto crea una tarea nueva
     public Tarea obtener(int id) {
-        String sql = "SELECT ta.id_tarea, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
-                "WHERE ta.id_tarea = ?;";
+        String sql = "SELECT ta.id as id_tarea, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
+                "WHERE ta.id = ?;";
 
 
         try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -100,9 +100,9 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerTodos() {
 
 
-        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala;";
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
@@ -111,7 +111,7 @@ public class TareaDAOImpl implements TareaDAO {
         try (Connection connection = DBUtil.getInstance().getConexion(); Statement statement = connection.createStatement();
 
 
-             ResultSet resultSet = statement.executeQuery(sql)) {
+            ResultSet resultSet = statement.executeQuery(sql)) {
 
 
             while (resultSet.next()) {
@@ -176,10 +176,10 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerPorTripulante(int idTrip) {
 
 
-        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
-                "WHERE tr.id_tripulante = ?;";
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
+                "WHERE tr.id = ?;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
