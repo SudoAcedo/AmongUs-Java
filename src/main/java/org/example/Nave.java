@@ -206,14 +206,18 @@ public class Nave {
         }
 
         int contadorTareas = 0;
+        int totalTareas = 0;
 
         for (Tarea tarea : this.tareas) {
-            if (tarea.isCompletada()) {
+            if (tarea.isCompletada() && !tarea.getDescripcion().equals("No Hay")) {
                 contadorTareas++;
+            }
+            if (!tarea.getDescripcion().equals("No Hay")) {
+                totalTareas++;
             }
         }
 
-        if (contadorTareas == this.tareas.size()) {
+        if (contadorTareas == totalTareas) {
             todasTareasCompletas = true;
         }
 

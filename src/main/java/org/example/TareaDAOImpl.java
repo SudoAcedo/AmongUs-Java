@@ -10,17 +10,24 @@ public class TareaDAOImpl implements TareaDAO {
 
     @Override
     public void insertar(Tarea tarea) {
-        /**todo dejarlo igual que en la BBDD*/
         String sql = "INSERT INTO tarea (descripcion, completada, id_tripulante, id_sala) VALUES (?, ?, ?, ?)";
 
         Connection connection = DBUtil.getInstance().getConexion();
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, tarea.getDescripcion());
             ps.setBoolean(2, tarea.isCompletada());
+
             ps.setInt(3, tarea.getTripulanteAsignado().getId());
             ps.setInt(4, tarea.getSala().getId());
             ps.executeUpdate();
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    tarea.setId(generatedKeys.getInt(1));
+                }
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

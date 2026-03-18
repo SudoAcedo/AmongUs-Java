@@ -13,11 +13,20 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         Connection connection = DBUtil.getInstance().getConexion();
 
-        try(PreparedStatement pst = connection.prepareStatement(sqlInsert)){
+        try(PreparedStatement pst = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)){
             pst.setString(1, tripulante.getNombre());
             pst.setString(2, tripulante.getRol());
             pst.setBoolean(3, tripulante.isVivo());
             pst.executeUpdate();
+
+
+            try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+
+                    tripulante.setId(generatedKeys.getInt(1));
+                }
+            }
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

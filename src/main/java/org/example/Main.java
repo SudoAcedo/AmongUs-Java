@@ -6,6 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+
+/* deshablilitar -> Habilite la revisión de las claves foráneas
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE tarea;
+TRUNCATE TABLE sala;
+TRUNCATE TABLE tripulante;
+SET FOREIGN_KEY_CHECKS = 1;
+ */
+
 public class Main {
     public static void main(String[] args) {
         
@@ -65,6 +74,7 @@ public class Main {
                     while (true) {
                         if (jugador.equals("X")) {
                             System.out.println("Nombre no disponible. Prueba con otro.");
+                            jugador = scanner.nextLine();
                         } else {
                             tripulantesNombres.add(jugador);
                             break;
@@ -303,88 +313,79 @@ public class Main {
         }
 
         TareaDAOImpl tareaDAO = new TareaDAOImpl();
+        ArrayList<Tarea> tareasFinales = new ArrayList<>();
 
         for (Tarea tarea : tareas) {
-            tareaDAO.insertar(tarea);
+            if (tarea.getTripulanteAsignado() != null && !tarea.getDescripcion().equals("No Hay")) {
+                tareaDAO.insertar(tarea);
+                tareasFinales.add(tarea);
+            }
         }
 
-        /*
-        ArrayList<Tripulante> tripulacionBBDD = new ArrayList<>(tripulanteDAO.obtenerTodos());
-        ArrayList<Sala> salasBBDD = new ArrayList<>(salaDao.obtenerTodos());
-        */
-        ArrayList<Tarea> tareasBBDD = new ArrayList<>(tareaDAO.obtenerTodos());
-        HashSet<Tripulante> tripulacionHashDeTareasBBDD = new HashSet<>();
-        HashSet<Sala> salasHashDeTareasBBDD = new HashSet<>();
-
-        for (Tarea tarea : tareasBBDD) {
-            tripulacionHashDeTareasBBDD.add(tarea.getTripulanteAsignado());
-            salasHashDeTareasBBDD.add(tarea.getSala());
-        }
-
-        ArrayList<Tripulante> tripulacionFinal = new ArrayList<>(tripulacionHashDeTareasBBDD);
-        ArrayList<Sala> salasFinal = new ArrayList<>(salasHashDeTareasBBDD);
-
-        Nave nave = new Nave(tripulacionFinal, salasFinal, tareasBBDD);
+        Nave nave = new Nave(tripulacion, salas, tareasFinales);
 
         while (!nave.verificarVictoriaImpostor() && !nave.verificarVictoriaTripulantes()) {
-            int tripulanteTurno = turno % tripulacionFinal.size();
-            nave.turno(tripulacionFinal.get(tripulanteTurno));
+
+            int tripulanteTurno = turno % tripulacion.size();
+            nave.turno(tripulacion.get(tripulanteTurno));
+
             turno++;
-        }
-        if (nave.verificarVictoriaImpostor()) {
-            int n = 0;
-            for (Tripulante tripulante : nave.getTripulantes()) {
-                if (tripulante.getRol().equals("Impostor")) {
-                    n++;
-                }
-                if (n == 1) {
-                    System.out.println("Gano el impostor.");
-                    System.out.println("El impostor elimino a todos los tripulantes.");
-                } else {
-                    System.out.println("Ganaron los impostores.");
-                    System.out.println("Los impostores eliminaron a todos los tripulantes.");
+
+            if (nave.verificarVictoriaImpostor()) {
+                int n = 0;
+                for (Tripulante tripulante : nave.getTripulantes()) {
+                    if (tripulante.getRol().equals("Impostor")) {
+                        n++;
+                    }
+                    if (n == 1) {
+                        System.out.println("Gano el impostor.");
+                        System.out.println("El impostor elimino a todos los tripulantes.");
+                    } else {
+                        System.out.println("Ganaron los impostores.");
+                        System.out.println("Los impostores eliminaron a todos los tripulantes.");
+                    }
+
+                    System.out.println("======== Resumen Final ========");
+                    System.out.println("Tripulantes: ");
+
+                    for (int i = 0; i < tripulacion.size(); i++) {
+                        System.out.print("[" + (i+1) + "]" + tripulacion.get(i).getNombre() + " ".repeat(7) + "- " + tripulacion.get(i).getRol() + " ".repeat(7) + "- ");
+                        if (tripulacion.get(i).isVivo()) {
+                            System.out.println("Vivo");
+                        } else {
+                            System.out.println("Muerto");
+                        }
+                    }
+
                 }
 
+            } else if (nave.verificarVictoriaTripulantes()) {
+                System.out.println("Ganaron los tripulantes");
                 System.out.println("======== Resumen Final ========");
                 System.out.println("Tripulantes: ");
-                for (int i = 0; i < tripulacionFinal.size(); i++) {
-                    System.out.print("[" + (i+1) + "]" + tripulacionFinal.get(i).getNombre() + " ".repeat(7) + "- " + tripulacionFinal.get(i).getRol() + " ".repeat(7) + "- ");
-                    if (tripulacionFinal.get(i).isVivo()) {
+                for (int i = 0; i < tripulacion.size(); i++) {
+                    System.out.print("[" + (i+1) + "]" + tripulacion.get(i).getNombre() + " ".repeat(7) + "- " + tripulacion.get(i).getRol() + " ".repeat(7) + "- ");
+                    if (tripulacion.get(i).isVivo()) {
                         System.out.println("Vivo");
                     } else {
                         System.out.println("Muerto");
                     }
                 }
 
-            }
-            //todo mas texto
-        } else if (nave.verificarVictoriaTripulantes()) {
-            System.out.println("Ganaron los tripulantes");
-            System.out.println("======== Resumen Final ========");
-            System.out.println("Tripulantes: ");
-            for (int i = 0; i < tripulacionFinal.size(); i++) {
-                System.out.print("[" + (i+1) + "]" + tripulacionFinal.get(i).getNombre() + " ".repeat(7) + "- " + tripulacionFinal.get(i).getRol() + " ".repeat(7) + "- ");
-                if (tripulacionFinal.get(i).isVivo()) {
-                    System.out.println("Vivo");
-                } else {
-                    System.out.println("Muerto");
-                }
-            }
+                int contadorCompletadas = 0;
+                int contadorTareas = 0;
 
-            int contadorCompletadas = 0;
-            int contadorTareas = 0;
+                for (Tarea tarea : nave.getTareas()) {
+                    if (tarea.isCompletada() && !tarea.getDescripcion().equals("No Hay")) {
+                        contadorCompletadas++;
+                    }
+                    if (!tarea.getDescripcion().equals("No Hay")) {
+                        contadorTareas++;
+                    }
+                }
 
-            for (Tarea tarea : nave.getTareas()) {
-                if (tarea.isCompletada() && !tarea.getDescripcion().equals("No Hay")) {
-                    contadorCompletadas++;
-                }
-                if (!tarea.getDescripcion().equals("No Hay")) {
-                    contadorTareas++;
-                }
+                System.out.println("Tareas completadas: " + contadorCompletadas + "/" + contadorTareas);
             }
-
-            System.out.println("Tareas completadas: " + contadorCompletadas + "/" + contadorTareas);
         }
-
     }
 }
