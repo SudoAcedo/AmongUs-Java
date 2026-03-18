@@ -6,13 +6,13 @@ public class Sala {
     private String nombre;
     private Boolean saboteada;
 
-    private static int contadorIdsTarea = 1;
+
 
     public Sala(String nombre) {
-        this.id = contadorIdsTarea;
+
         this.nombre = nombre;
         this.saboteada = false;
-        contadorIdsTarea++;
+
     }
 
         public int getId() {

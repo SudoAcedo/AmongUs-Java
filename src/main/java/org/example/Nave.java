@@ -55,7 +55,7 @@ public class Nave {
                 vivos.add(tripulante.getNombre());
                 tripulantesVivos.add(tripulante);
             } else {
-                vivos.add(tripulante.getNombre());
+                muertos.add(tripulante.getNombre());
             }
         }
 
@@ -83,9 +83,18 @@ public class Nave {
 
 
         int contadorCompletadas = 0;
-        ArrayList<Tarea> tripulanteTareas = new ArrayList<>();
+        int contadorTareas = 0;
 
-        System.out.println("Tareas completadas: " + contadorCompletadas + "/" + this.tareas.size());
+        for (Tarea tarea : this.tareas) {
+            if (tarea.isCompletada() && !tarea.getDescripcion().equals("No Hay")) {
+                contadorCompletadas++;
+            }
+            if (!tarea.getDescripcion().equals("No Hay")) {
+                contadorTareas++;
+            }
+        }
+
+        System.out.println("Tareas completadas: " + contadorCompletadas + "/" + contadorTareas);
     }
 
     public void iniciarVotacion() {
@@ -135,6 +144,7 @@ public class Nave {
 
                 if (indiceTripulante < 0 || indiceTripulante > tripulantesVotan.size()) {
                     System.out.println("Introduce una respuesta válida.");
+                    continue;
                 } else {
                     if (indiceTripulante == 0) {
                         System.out.println("Saltando votación...");
@@ -326,8 +336,8 @@ public class Nave {
 
                             tripulantesVivos.remove(tripulanteTurno);
 
-                            for (int i = 1; i <= vivos.size(); i++) {
-                                System.out.println("    [" + i + "] " + vivos.get(i - 1) + ".");
+                            for (int i = 1; i <= tripulantesVivos.size(); i++) {
+                                System.out.println("    [" + i + "] " + tripulantesVivos.get(i - 1).getNombre() + ".");
                             }
 
                             boolean c = true;
@@ -371,7 +381,7 @@ public class Nave {
 
             ArrayList<Tarea> tripulanteTareas = new ArrayList<>();
             for (Tarea tarea : this.tareas) {
-                if (tarea.getTripulanteAsignado().getId() == tripulanteTurno.getId()) {
+                if (tarea.getTripulanteAsignado().getId() == tripulanteTurno.getId() && !tarea.isCompletada()) {
                     tripulanteTareas.add(tarea);
                 }
             }

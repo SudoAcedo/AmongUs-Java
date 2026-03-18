@@ -16,6 +16,26 @@ public class Main {
         System.out.println("      AMONG US TERMINAL - NAVE ESPACIAL      ");
         System.out.println("=============================================");
 
+        File sus = new File("src/main/java/org/example/sus.txt");
+
+        String arteAscii = "";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sus))) {
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+
+                arteAscii = arteAscii + linea + "\n";
+
+            }
+
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        System.out.println("\033[31m" + arteAscii + "\033[0m");
+
         System.out.print("Cuántos tripulantes van a jugar? (4-10): ");
 
         ArrayList<String> tripulantesNombres = new ArrayList<>();
@@ -261,8 +281,14 @@ public class Main {
 
                 tareas.get(contadorTarea).setTripulanteAsignado(tripulacion.get(i));
                 contadorTarea++;
+            } else {
+                Sala sala = new Sala("Imp");
+                Tarea tareaImpostor = new Tarea("No Hay", tripulacion.get(i), sala);
+                tareas.add(tareaImpostor);
             }
         }
+
+
 
         SalaDaoImpl salaDao = new SalaDaoImpl();
 
@@ -282,19 +308,82 @@ public class Main {
             tareaDAO.insertar(tarea);
         }
 
-        Nave nave = new Nave(tripulacion, salas, tareas);
+        /*
+        ArrayList<Tripulante> tripulacionBBDD = new ArrayList<>(tripulanteDAO.obtenerTodos());
+        ArrayList<Sala> salasBBDD = new ArrayList<>(salaDao.obtenerTodos());
+        */
+        ArrayList<Tarea> tareasBBDD = new ArrayList<>(tareaDAO.obtenerTodos());
+        HashSet<Tripulante> tripulacionHashDeTareasBBDD = new HashSet<>();
+        HashSet<Sala> salasHashDeTareasBBDD = new HashSet<>();
+
+        for (Tarea tarea : tareasBBDD) {
+            tripulacionHashDeTareasBBDD.add(tarea.getTripulanteAsignado());
+            salasHashDeTareasBBDD.add(tarea.getSala());
+        }
+
+        ArrayList<Tripulante> tripulacionFinal = new ArrayList<>(tripulacionHashDeTareasBBDD);
+        ArrayList<Sala> salasFinal = new ArrayList<>(salasHashDeTareasBBDD);
+
+        Nave nave = new Nave(tripulacionFinal, salasFinal, tareasBBDD);
 
         while (!nave.verificarVictoriaImpostor() && !nave.verificarVictoriaTripulantes()) {
-            int tripulanteTurno = turno % tripulacion.size();
-            nave.turno(tripulacion.get(tripulanteTurno));
+            int tripulanteTurno = turno % tripulacionFinal.size();
+            nave.turno(tripulacionFinal.get(tripulanteTurno));
             turno++;
         }
         if (nave.verificarVictoriaImpostor()) {
-            System.out.println("Ganaron los impostores");
+            int n = 0;
+            for (Tripulante tripulante : nave.getTripulantes()) {
+                if (tripulante.getRol().equals("Impostor")) {
+                    n++;
+                }
+                if (n == 1) {
+                    System.out.println("Gano el impostor.");
+                    System.out.println("El impostor elimino a todos los tripulantes.");
+                } else {
+                    System.out.println("Ganaron los impostores.");
+                    System.out.println("Los impostores eliminaron a todos los tripulantes.");
+                }
+
+                System.out.println("======== Resumen Final ========");
+                System.out.println("Tripulantes: ");
+                for (int i = 0; i < tripulacionFinal.size(); i++) {
+                    System.out.print("[" + (i+1) + "]" + tripulacionFinal.get(i).getNombre() + " ".repeat(7) + "- " + tripulacionFinal.get(i).getRol() + " ".repeat(7) + "- ");
+                    if (tripulacionFinal.get(i).isVivo()) {
+                        System.out.println("Vivo");
+                    } else {
+                        System.out.println("Muerto");
+                    }
+                }
+
+            }
             //todo mas texto
         } else if (nave.verificarVictoriaTripulantes()) {
             System.out.println("Ganaron los tripulantes");
-            //todo mas texto
+            System.out.println("======== Resumen Final ========");
+            System.out.println("Tripulantes: ");
+            for (int i = 0; i < tripulacionFinal.size(); i++) {
+                System.out.print("[" + (i+1) + "]" + tripulacionFinal.get(i).getNombre() + " ".repeat(7) + "- " + tripulacionFinal.get(i).getRol() + " ".repeat(7) + "- ");
+                if (tripulacionFinal.get(i).isVivo()) {
+                    System.out.println("Vivo");
+                } else {
+                    System.out.println("Muerto");
+                }
+            }
+
+            int contadorCompletadas = 0;
+            int contadorTareas = 0;
+
+            for (Tarea tarea : nave.getTareas()) {
+                if (tarea.isCompletada() && !tarea.getDescripcion().equals("No Hay")) {
+                    contadorCompletadas++;
+                }
+                if (!tarea.getDescripcion().equals("No Hay")) {
+                    contadorTareas++;
+                }
+            }
+
+            System.out.println("Tareas completadas: " + contadorCompletadas + "/" + contadorTareas);
         }
 
     }

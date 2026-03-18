@@ -7,14 +7,13 @@ public abstract class Tripulante implements Votable, Trabajable{
     private String rol;
     private boolean vivo;
 
-    private static int contadorIdsTrip = 1;
 
     public Tripulante(String nombre, String rol) {
-        this.id = contadorIdsTrip;
+
         this.nombre = nombre;
         this.rol = rol;
         this.vivo = true;
-        contadorIdsTrip++;
+
     }
 
     public int getId() {
