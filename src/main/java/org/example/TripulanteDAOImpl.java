@@ -11,7 +11,9 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         String sqlInsert = "INSERT INTO tripulante(nombre, rol, vivo) VALUES(?,?,?)";
 
-        try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement pst = connection.prepareStatement(sqlInsert)){
+        Connection connection = DBUtil.getInstance().getConexion();
+
+        try(PreparedStatement pst = connection.prepareStatement(sqlInsert)){
             pst.setString(1, tripulante.getNombre());
             pst.setString(2, tripulante.getRol());
             pst.setBoolean(3, tripulante.isVivo());
@@ -27,7 +29,9 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         String sql = "SELECT id, nombre, rol, vivo FROM tripulante WHERE id = ?;";
 
-        try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        Connection connection = DBUtil.getInstance().getConexion();
+
+        try(PreparedStatement ps = connection.prepareStatement(sql)) {
 
 
             ps.setInt(1, id);
@@ -77,7 +81,9 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         ArrayList<Tripulante> tablaTripulante = new ArrayList<>();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); Statement statement = connection.createStatement();
+        Connection connection = DBUtil.getInstance().getConexion();
+
+        try (Statement statement = connection.createStatement();
 
              ResultSet resultSet = statement.executeQuery(sql)) {
 
@@ -119,7 +125,9 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         String sql = "UPDATE tripulante SET nombre = ?, rol = ?, vivo = ? WHERE id = ?;";
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        Connection connection = DBUtil.getInstance().getConexion();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tripulante.getNombre());
             ps.setString(2, tripulante.getRol());
             ps.setBoolean(3, tripulante.isVivo());
@@ -135,8 +143,9 @@ public class TripulanteDAOImpl implements TripulanteDAO {
 
         String sql = " DELETE FROM tripulante WHERE id = ?;";
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
