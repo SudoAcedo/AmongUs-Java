@@ -7,7 +7,13 @@ import java.io.IOException;
 import java.util.*;
 
 
-/* deshablilitar -> Habilite la revisión de las claves foráneas
+/*
+
+Esto para borrar la Base de Datos
+
+deshablilitar -> Habilite la revisión de las claves foráneas
+
+
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE tarea;
 TRUNCATE TABLE sala;
