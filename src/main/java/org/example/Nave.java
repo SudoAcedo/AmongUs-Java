@@ -122,7 +122,10 @@ public class Nave {
             limpiarPantalla();
             System.out.println("Turno de votar de " + tripulante.getNombre());
 
-
+            for (int i = 0; i < tripulantesVotan.size(); i++) {
+                System.out.println("[ "+i+" ]");
+                System.out.println(tripulantesVotan.get(i).getNombre());
+            }
             System.out.println("?A quien votas¿ (1-" + tripulantesVotan.size() + ", 0 para skip)");
             boolean c = true;
 
@@ -280,7 +283,7 @@ public class Nave {
             if (tripulanteTurno.isVivo()) {
                 System.out.println("¿Que quieres hacer?: ");
                 System.out.println("   1) Simular tarea.");
-                System.out.print("   2) Sabotear una sala: ");
+                System.out.println("   2) Sabotear una sala: ");
                 System.out.println("   3) Eliminar a un tripulante");
                 System.out.println("   4) Convocar votacion");
                 System.out.println("   5) Pasar turno");
