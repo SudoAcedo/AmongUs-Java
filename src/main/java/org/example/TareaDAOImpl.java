@@ -10,16 +10,24 @@ public class TareaDAOImpl implements TareaDAO {
 
     @Override
     public void insertar(Tarea tarea) {
-        /**todo dejarlo igual que en la BBDD*/
         String sql = "INSERT INTO tarea (descripcion, completada, id_tripulante, id_sala) VALUES (?, ?, ?, ?)";
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, tarea.getDescripcion());
             ps.setBoolean(2, tarea.isCompletada());
+
             ps.setInt(3, tarea.getTripulanteAsignado().getId());
             ps.setInt(4, tarea.getSala().getId());
             ps.executeUpdate();
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    tarea.setId(generatedKeys.getInt(1));
+                }
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -28,13 +36,14 @@ public class TareaDAOImpl implements TareaDAO {
 
     //Esto crea una tarea nueva
     public Tarea obtener(int id) {
-        String sql = "SELECT ta.id_tarea, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
-                "WHERE ta.id_tarea = ?;";
+        String sql = "SELECT ta.id as id_tarea, ta.descripcion, ta.completada, ta.id_tripulante, tr.nombre, tr.rol, tr.vivo, ta.id_sala, s.nombre AS nombre_sala, s.saboteada " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
+                "WHERE ta.id = ?;";
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try(Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try(PreparedStatement ps = connection.prepareStatement(sql)) {
 
 
             ps.setInt(1, id);
@@ -100,18 +109,19 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerTodos() {
 
 
-        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala;";
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement();
 
 
-             ResultSet resultSet = statement.executeQuery(sql)) {
+            ResultSet resultSet = statement.executeQuery(sql)) {
 
 
             while (resultSet.next()) {
@@ -176,16 +186,17 @@ public class TareaDAOImpl implements TareaDAO {
     public ArrayList<Tarea> obtenerPorTripulante(int idTrip) {
 
 
-        String sql = "SELECT *, ta.id_tarea AS id_tarea, tr.id_tripulante AS id_tripulante, s.id_sala AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
-                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id_tripulante " +
-                "INNER JOIN sala AS s ON ta.id_sala = s.id_sala " +
-                "WHERE tr.id_tripulante = ?;";
+        String sql = "SELECT *, ta.id AS id_tarea, tr.id AS id_tripulante, s.id AS id_sala, tr.nombre AS nombre_tripulante, s.nombre AS nombre_sala " +
+                "FROM tarea AS ta INNER JOIN tripulante AS tr ON ta.id_tripulante = tr.id " +
+                "INNER JOIN sala AS s ON ta.id_sala = s.id " +
+                "WHERE tr.id = ?;";
 
 
         ArrayList<Tarea> tablaTarea = new ArrayList<>();
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
 
             preparedStatement.setInt(1, idTrip);
@@ -257,8 +268,9 @@ public class TareaDAOImpl implements TareaDAO {
     public void actualizar(Tarea tarea){
         String sql = "UPDATE tarea SET descripcion = ?, completada = ?, id_tripulante = ?, id_sala = ? WHERE id = ?;";
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tarea.getDescripcion());
             ps.setBoolean(2, tarea.isCompletada());
             ps.setInt(3, tarea.getTripulanteAsignado().getId());
@@ -276,8 +288,9 @@ public class TareaDAOImpl implements TareaDAO {
 
         String sql = " DELETE FROM tarea WHERE id_tarea = ?;";
 
+        Connection connection = DBUtil.getInstance().getConexion();
 
-        try (Connection connection = DBUtil.getInstance().getConexion(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {

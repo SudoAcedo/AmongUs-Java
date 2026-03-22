@@ -1,0 +1,36 @@
+Vaciar los conductos de basura
+Cafeteria
+Reparar el cableado eléctrico expuesto
+Electricidad
+Pasar la tarjeta de identificación en el panel
+Administracion
+Alinear la salida del motor principal
+Motor_Superior
+Estabilizar la dirección de la nave
+Navegacion
+Limpiar los filtros de oxígeno
+O2
+Destruir los asteroides cercanos
+Armeria
+Inspeccionar las muestras biológicas
+Ala_Medica
+Descargar los datos del servidor
+Comunicaciones
+Subir los datos de la tripulación
+Administracion
+Arrancar la secuencia de fusión
+Reactor
+Desbloquear los colectores de energía
+Reactor
+Encender los escudos de defensa exterior
+Escudos
+Desviar energía a los escudos
+Electricidad
+Recargar los tanques de combustible
+Almacen
+Calibrar el distribuidor de voltaje
+Electricidad
+Trazar el nuevo rumbo estelar
+Navegacion
+Revisar los registros de las cámaras
+Seguridad

@@ -5,9 +5,9 @@ public class Tarea {
     private int id;
     private String descripcion;
     private boolean completada;
-    /**todo falta que se creen las clases*/
-     private Tripulante tripulanteAsignado;
-     private Sala sala;
+    private Tripulante tripulanteAsignado;
+    private Sala sala;
+
 
     public Tarea(String descripcion, Tripulante tripulante, Sala sala) {
         this.descripcion = descripcion;
@@ -57,7 +57,12 @@ public class Tarea {
 
     @Override
     public String toString() {
-        /**todo falta definirlo*/
-        return super.toString();
+        return "Tarea{" +
+                "id=" + id +
+                ", descripcion='" + descripcion +
+                ", completada=" + completada +
+                ", tripulanteAsignado=" + tripulanteAsignado +
+                ", sala=" + sala +
+                '}';
     }
 }

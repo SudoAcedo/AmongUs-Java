@@ -1,7 +1,5 @@
 package org.example;
 
-import java.sql.PreparedStatement;
-
 public abstract class Tripulante implements Votable, Trabajable{
 
     private int id;
@@ -9,10 +7,13 @@ public abstract class Tripulante implements Votable, Trabajable{
     private String rol;
     private boolean vivo;
 
+
     public Tripulante(String nombre, String rol) {
+
         this.nombre = nombre;
         this.rol = rol;
         this.vivo = true;
+
     }
 
     public int getId() {
@@ -64,7 +65,7 @@ public abstract class Tripulante implements Votable, Trabajable{
         if (this.isVivo() && sospechoso.isVivo()) {
             System.out.println(this.nombre + " vota a " + sospechoso.getNombre() + ".");
         } else {
-            System.out.println("El voto no es valido");
+            System.out.println("El voto no es válido");
         }
     }
 

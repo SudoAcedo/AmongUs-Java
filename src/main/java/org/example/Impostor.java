@@ -27,7 +27,6 @@ public class Impostor extends Tripulante {
 
     @Override
     public void realizarTarea(Tarea tarea){
-
         System.out.println("Estas simulando que haces una tarea: "+ tarea.getDescripcion());
     }
 }

@@ -1,9 +1,6 @@
 package org.example;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class SalaDaoImpl implements SalaDAO {
@@ -11,12 +8,20 @@ public class SalaDaoImpl implements SalaDAO {
     @Override
     public void insertar(Sala sala) {
         String sql = "INSERT INTO sala (nombre, saboteada) VALUES (?, ?)";
-        try (Connection conn = DBUtil.getInstance().getConexion();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+        Connection conn = DBUtil.getInstance().getConexion();
+
+        try (PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pst.setString(1, sala.getNombre());
             pst.setBoolean(2, sala.isSaboteada());
             pst.executeUpdate();
+
+            try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    sala.setId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -28,8 +33,9 @@ public class SalaDaoImpl implements SalaDAO {
             String sql = "SELECT * FROM sala WHERE id = ?";
             Sala sala = null;
 
-            try (Connection conn = DBUtil.getInstance().getConexion();
-                 PreparedStatement pst = conn.prepareStatement(sql)) {
+            Connection conn = DBUtil.getInstance().getConexion();
+
+            try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
                 pst.setInt(1, id);
 
@@ -53,8 +59,9 @@ public class SalaDaoImpl implements SalaDAO {
             String sql = "SELECT * FROM sala";
             ArrayList<Sala> salas = new ArrayList<>();
 
-            try (Connection conn = DBUtil.getInstance().getConexion();
-                 PreparedStatement pst = conn.prepareStatement(sql);
+            Connection conn = DBUtil.getInstance().getConexion();
+
+            try (PreparedStatement pst = conn.prepareStatement(sql);
                  ResultSet rs = pst.executeQuery()) {
 
                 while (rs.next()) {
@@ -75,8 +82,9 @@ public class SalaDaoImpl implements SalaDAO {
         public void actualizar(Sala sala) {
             String sql = "UPDATE sala SET nombre = ?, saboteada = ? WHERE id = ?";
 
-            try (Connection conn = DBUtil.getInstance().getConexion();
-                 PreparedStatement pst = conn.prepareStatement(sql)) {
+            Connection conn = DBUtil.getInstance().getConexion();
+
+            try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
                 pst.setString(1, sala.getNombre());
                 pst.setBoolean(2, sala.isSaboteada());
@@ -92,8 +100,9 @@ public class SalaDaoImpl implements SalaDAO {
         public void eliminar(int id) {
             String sql = "DELETE FROM sala WHERE id = ?";
 
-            try (Connection conn = DBUtil.getInstance().getConexion();
-                 PreparedStatement pst = conn.prepareStatement(sql)) {
+            Connection conn = DBUtil.getInstance().getConexion();
+
+            try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
                 pst.setInt(1, id);
                 pst.executeUpdate();

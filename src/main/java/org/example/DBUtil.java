@@ -14,14 +14,9 @@ public class DBUtil {
         String USER = "root";
         String PASS = "";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            try (Statement st = conn.createStatement()){
+        try {
 
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.conexion = conn;
+            this.conexion = DriverManager.getConnection(DB_URL, USER, PASS);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
