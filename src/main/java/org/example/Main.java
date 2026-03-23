@@ -11,13 +11,14 @@ import java.util.*;
 
 Esto para borrar la Base de Datos
 
-DELETE FROM tarea;
-DELETE FROM sala;
-DELETE FROM tripulante;
+deshablilitar -> Habilite la revisión de las claves foráneas
 
-ALTER TABLE tarea AUTO_INCREMENT = 1;
-ALTER TABLE sala AUTO_INCREMENT = 1;
-ALTER TABLE tripulante AUTO_INCREMENT = 1;
+
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE tarea;
+TRUNCATE TABLE sala;
+TRUNCATE TABLE tripulante;
+SET FOREIGN_KEY_CHECKS = 1;
  */
 
 public class Main {
